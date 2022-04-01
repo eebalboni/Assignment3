@@ -3,7 +3,6 @@ package edu.quinnipiac.ser210.assignment2part2piano;
 import static androidx.core.content.PackageManagerCompat.LOG_TAG;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,7 +21,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MainActivityFragment.submitButtonListener {
         ChordHandler chordHandler = new ChordHandler();
 
         private String url1 = "https://piano-chords.p.rapidapi.com/chords/";
@@ -53,11 +52,16 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        public void onSubmit(View view) {
-            if(root != null){
-                new FetchNote().execute(root);
-            }
+    public void onSubmit(View view) {
+        if(root != null){
+            new FetchNote().execute(root);
         }
+    }
+
+    @Override
+    public void submitButtonOnClick() {
+
+    }
 
     class FetchNote extends AsyncTask<String,Void,ArrayList<Chord>>{
             @Override
