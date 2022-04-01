@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Assignment2Part2Piano</string>
+    <string name="notes">notes</string>
+    <string name="chordName">chordName</string>
+    <string name="root_placeholder">Note Name</string>
+    <string name="notes_placeholder">Notes</string>
+    <string name="intervals_placeholder">Intervals</string>
+    <string name="submit_button">Submit</string>
+    <string name="title">Welcome to the Piano App! Please select a root note to find all the chords that originate from that root!</string>
+    <string name="action_shuffle">Shuffle</string>
+    <string name="action_search">Search</string>
+    <string name="action_random">Random Chord</string>
+</resources>
