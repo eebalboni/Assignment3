@@ -76,6 +76,7 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
             }
         });
 
+        //returns layout
         return layout;
     }
 
