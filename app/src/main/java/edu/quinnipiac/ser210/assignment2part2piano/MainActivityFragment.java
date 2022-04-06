@@ -75,7 +75,7 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
 
             }
         });
-        
+
         return layout;
     }
 
