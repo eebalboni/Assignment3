@@ -26,16 +26,10 @@ public class ChordsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chords);
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(myToolbar);
 
-        mRecyclerView = findViewById(R.id.recyclerView);
-        linearLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(linearLayoutManager);
-
+        ChordListFragment frag =(ChordListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_chord_list);
         mChordData = (ArrayList<Chord>) getIntent().getExtras().get("chords");
-        mChordAdapter = new ChordAdapter(this, mChordData);
-        mRecyclerView.setAdapter(mChordAdapter);
+        frag.setChordData(mChordData);
     }
 
     //Gets the menu options from the menu xml and displays them on the tool bar

@@ -1,10 +1,21 @@
 package edu.quinnipiac.ser210.assignment2part2piano;
 
 import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -18,6 +29,11 @@ public class ChordListFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private RecyclerView mRecyclerView;
+    private LinearLayoutManager linearLayoutManager;
+    private ArrayList<Chord> mChordData;
+    private ChordAdapter mChordAdapter;
+
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -58,6 +74,24 @@ public class ChordListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_chord_list, container, false);
+        View layout = inflater.inflate(R.layout.fragment_main_activity,container,false);
+
+        Toolbar myToolbar = (Toolbar) layout.findViewById(R.id.toolbar);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(myToolbar);
+
+        mRecyclerView = layout.findViewById(R.id.recyclerView);
+        linearLayoutManager = new LinearLayoutManager(this.getActivity());
+        mRecyclerView.setLayoutManager(linearLayoutManager);
+        mChordAdapter = new ChordAdapter(this.getActivity(), mChordData);
+        mRecyclerView.setAdapter(mChordAdapter);
+
+
+        return layout;
     }
+
+
+    public void setChordData(ArrayList<Chord> chords){
+        mChordData = chords;
+    }
+
 }
