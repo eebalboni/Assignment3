@@ -58,8 +58,6 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
         Button submitButton = (Button) layout.findViewById(R.id.submitButton);
         submitButton.setOnClickListener(this);
 
-
-
         Spinner spinner = (Spinner)layout.findViewById(R.id.spinner);
 
         ArrayAdapter<String> chordAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, chordHandler.chords);
@@ -78,7 +76,7 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
             }
         });
 
-        return inflater.inflate(R.layout.fragment_main_activity, container, false);
+        return layout;
     }
 
     class FetchNote extends AsyncTask<String,Void, ArrayList<Chord>> {
