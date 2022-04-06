@@ -63,8 +63,7 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
 
         Spinner spinner = (Spinner)layout.findViewById(R.id.spinner);
 
-        ArrayAdapter<String> chordAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,chordHandler.chords);
-
+        ArrayAdapter<String> chordAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, chordHandler.chords);
         chordAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         spinner.setAdapter(chordAdapter);
@@ -128,7 +127,7 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
             if (result != null)
                 Log.d(LOG_TAG, result.toString());
             //help
-            Intent intent = new Intent(MainActivityFragment.this,ChordsActivity.class);
+            Intent intent = new Intent(MainActivityFragment.this.getActivity(), ChordsActivity.class);
             intent.putExtra("chords", result);
             startActivity(intent);
 
