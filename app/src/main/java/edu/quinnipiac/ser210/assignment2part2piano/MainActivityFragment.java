@@ -37,7 +37,6 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
     public void onClick(View view){
         onSubmit();
     }
-
     private void onSubmit() {
         if(root != null){
             new FetchNote().execute(root);
