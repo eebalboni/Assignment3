@@ -16,8 +16,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Locale;
+import java.util.Random;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,7 +29,7 @@ import java.util.ArrayList;
  * create an instance of this fragment.
  *
  */
-public class ChordListFragment extends Fragment {
+public class ChordListFragment extends Fragment implements Toolbar.OnMenuItemClickListener{
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -35,6 +39,23 @@ public class ChordListFragment extends Fragment {
     private LinearLayoutManager linearLayoutManager;
     private ArrayList<Chord> mChordData;
     private ChordAdapter mChordAdapter;
+    private Menu menu;
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        int id = item.getItemId();
+        switch(id){
+            case R.id.action_shuffle:{
+                shuffle();
+                return true;
+            }
+            case R.id.action_random:{
+                random();
+                return true;
+            }
+            default:
+                return false;
+        }
+    }
 
     static interface Listener{
         boolean toolbarItemClicked(MenuItem item);
@@ -43,18 +64,7 @@ public class ChordListFragment extends Fragment {
     private Listener listener;
 
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ChordListFragment.
-     */
     // TODO: Rename and change types and number of parameters
     public static ChordListFragment newInstance(String param1, String param2) {
         ChordListFragment fragment = new ChordListFragment();
@@ -72,10 +82,6 @@ public class ChordListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -84,8 +90,10 @@ public class ChordListFragment extends Fragment {
         // Inflate the layout for this fragment
         View layout = inflater.inflate(R.layout.fragment_chord_list,container,false);
 
-        Toolbar myToolbar = (Toolbar) layout.findViewById(R.id.toolbar);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(myToolbar);
+        //code from online https://stackoverflow.com/questions/29020935/using-toolbar-with-fragments#comment103001314_54361849
+        Toolbar toolbar = (Toolbar) layout.findViewById(R.id.toolbar);
+        toolbar.inflateMenu(R.menu.main_menu);
+        menu = toolbar.getMenu();
 
         mRecyclerView = layout.findViewById(R.id.recyclerView);
         mRecyclerView.setHasFixedSize(true);
@@ -100,7 +108,6 @@ public class ChordListFragment extends Fragment {
         mChordAdapter = new ChordAdapter(this.getActivity(), mChordData);
         mRecyclerView.setAdapter(mChordAdapter);
 
-
         return layout;
     }
 
@@ -110,19 +117,62 @@ public class ChordListFragment extends Fragment {
         this.listener = (Listener) context;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(listener != null){
-            listener.toolbarItemClicked(item);
-            return true;
-        }else{
-            return false;
-        }
-    }
 
     public void setChordData(ArrayList<Chord> chords){
         mChordData = chords;
         mChordAdapter.filterList(mChordData);
+    }
+
+
+    //Searches for a chord using a given string from the Search View
+    public void filter(String text){
+        ArrayList<Chord> filteredList = new ArrayList<>();
+
+        for(Chord item : mChordData){
+            if(item.getRoot().toLowerCase().contains(text.toLowerCase(Locale.ROOT))){
+                filteredList.add(item);
+            }
+        }
+
+        if(filteredList.isEmpty()){
+            Toast.makeText(this, "No Chords Found", Toast.LENGTH_SHORT).show();
+        }else{
+            mChordAdapter.filterList(filteredList);
+        }
+    }
+
+    //Shuffles the recycle view
+    public void shuffle(){
+        Collections.shuffle(mChordData, new Random());
+        mChordAdapter.filterList(mChordData);
+    }
+
+    //Scrolls to a random position in the recycle view, resulting a random chord being shown
+    public void random(){
+        int pos = (int) (Math.random() * mChordData.size());
+        linearLayoutManager.scrollToPositionWithOffset(pos, 0);
+    }
+
+
+    public boolean onCreateOptionsMenu(Menu menu){
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+
+        //Listener for the search view
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                filter(s);
+                return false;
+            }
+        });
+
+        return super.onCreateOptionsMenu(menu);
     }
 
 
