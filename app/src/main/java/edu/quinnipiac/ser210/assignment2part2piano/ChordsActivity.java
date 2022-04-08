@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.Locale;
 import java.util.Random;
 
-public class ChordsActivity extends AppCompatActivity {
+public class ChordsActivity extends AppCompatActivity implements ChordListFragment.Listener{
     private RecyclerView mRecyclerView;
     private LinearLayoutManager linearLayoutManager;
     private ArrayList<Chord> mChordData;
@@ -26,16 +26,10 @@ public class ChordsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chords);
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(myToolbar);
 
-        mRecyclerView = findViewById(R.id.recyclerView);
-        linearLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(linearLayoutManager);
-
+        ChordListFragment frag = (ChordListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_chord_list);
         mChordData = (ArrayList<Chord>) getIntent().getExtras().get("chords");
-        mChordAdapter = new ChordAdapter(this, mChordData);
-        mRecyclerView.setAdapter(mChordAdapter);
+        frag.setChordData(mChordData);
     }
 
     //Gets the menu options from the menu xml and displays them on the tool bar
@@ -63,9 +57,8 @@ public class ChordsActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    //Listener for the buttons on the toolbar
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
+    public boolean toolbarItemClicked(MenuItem item) {
         int id = item.getItemId();
         switch(id){
             case R.id.action_shuffle:{
@@ -109,4 +102,5 @@ public class ChordsActivity extends AppCompatActivity {
         int pos = (int) (Math.random() * mChordData.size());
         linearLayoutManager.scrollToPositionWithOffset(pos, 0);
     }
+
 }
