@@ -1,7 +1,9 @@
 package edu.quinnipiac.ser210.assignment2part2piano;
 
+import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -33,6 +35,12 @@ public class ChordListFragment extends Fragment {
     private LinearLayoutManager linearLayoutManager;
     private ArrayList<Chord> mChordData;
     private ChordAdapter mChordAdapter;
+
+    static interface Listener{
+        boolean toolbarItemClicked(MenuItem item);
+    }
+
+    private Listener listener;
 
 
     // TODO: Rename and change types of parameters
@@ -74,14 +82,21 @@ public class ChordListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View layout = inflater.inflate(R.layout.fragment_main_activity,container,false);
+        View layout = inflater.inflate(R.layout.fragment_chord_list,container,false);
 
         Toolbar myToolbar = (Toolbar) layout.findViewById(R.id.toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(myToolbar);
 
         mRecyclerView = layout.findViewById(R.id.recyclerView);
-        linearLayoutManager = new LinearLayoutManager(this.getActivity());
+        mRecyclerView.setHasFixedSize(true);
+        linearLayoutManager = new LinearLayoutManager(layout.getContext());
         mRecyclerView.setLayoutManager(linearLayoutManager);
+
+        //temp data
+        mChordData = new ArrayList<Chord>();
+        String[] b = {"b"};
+        mChordData.add(new Chord("b",b,b));
+
         mChordAdapter = new ChordAdapter(this.getActivity(), mChordData);
         mRecyclerView.setAdapter(mChordAdapter);
 
@@ -89,9 +104,27 @@ public class ChordListFragment extends Fragment {
         return layout;
     }
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.listener = (Listener) context;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(listener != null){
+            listener.toolbarItemClicked(item);
+            return true;
+        }else{
+            return false;
+        }
+    }
 
     public void setChordData(ArrayList<Chord> chords){
         mChordData = chords;
+        mChordAdapter.filterList(mChordData);
     }
+
+
 
 }
