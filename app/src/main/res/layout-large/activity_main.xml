@@ -12,11 +12,10 @@
         android:id="@+id/main_activity_fragment"
         />
 
-    <fragment
-        android:name="edu.quinnipiac.ser210.assignment2part2piano.ChordListFragment"
+    <FrameLayout
         android:layout_width="0dp"
         android:layout_weight="3"
         android:layout_height="match_parent"
-        android:id="@+id/fragment_chord_list"
+        android:id="@+id/fragment_chord_container"
         />
 </LinearLayout>
