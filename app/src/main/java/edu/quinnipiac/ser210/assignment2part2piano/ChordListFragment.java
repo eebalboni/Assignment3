@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -92,10 +93,12 @@ public class ChordListFragment extends Fragment {
         linearLayoutManager = new LinearLayoutManager(layout.getContext());
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
-        //temp data
-        mChordData = new ArrayList<Chord>();
-        String[] b = {"b"};
-        mChordData.add(new Chord("b",b,b));
+//        if(mChordData == null){
+//            //temp data
+//            mChordData = new ArrayList<Chord>();
+//            String[] b = {"b"};
+//            mChordData.add(new Chord("b",b,b));
+//        }
 
         mChordAdapter = new ChordAdapter(this.getActivity(), mChordData);
         mRecyclerView.setAdapter(mChordAdapter);
@@ -151,8 +154,13 @@ public class ChordListFragment extends Fragment {
 
     public void setChordData(ArrayList<Chord> chords){
         mChordData = chords;
+    }
+
+    public void replaceChordData(ArrayList<Chord> chords){
+        mChordData = chords;
         mChordAdapter.filterList(mChordData);
     }
+//The difference between setChordData and replaceChordData is that setChordData handles sending the chord data to the fragment while replaceChordData handles sending the chord data to the activity
 
     //Searches for a chord using a given string from the Search View
     public void filter(String text){

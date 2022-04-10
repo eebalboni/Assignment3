@@ -29,7 +29,7 @@ public class ChordsActivity extends AppCompatActivity{
 
         ChordListFragment frag = (ChordListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_chord_list);
         mChordData = (ArrayList<Chord>) getIntent().getExtras().get("chords");
-        frag.setChordData(mChordData);
+        frag.replaceChordData(mChordData);
     }
 
 }

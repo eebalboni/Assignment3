@@ -1,9 +1,11 @@
 package edu.quinnipiac.ser210.assignment2part2piano;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -33,15 +35,32 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
     private String url1 = "https://piano-chords.p.rapidapi.com/chords/";
     private String LOG_TAG = MainActivity.class.getSimpleName();
     private String root;
+
+
+    static interface Listener{
+        void onButtonClick(ArrayList<Chord> chords);
+    }
+
+    private Listener listener;
+
     @Override
     public void onClick(View view){
-        onSubmit();
-    }
-    private void onSubmit() {
-        if(root != null){
+        if(listener != null){
             new FetchNote().execute(root);
         }
     }
+//    public ArrayList<Chord> getChords() {
+//        if(root != null){
+//            new FetchNote().execute(root);
+//            if(chords != null){
+//                return chords;
+//            }else{
+//                return null;
+//            }
+//        }else{
+//            return null;
+//        }
+//    }
 
 
     @Override
@@ -78,6 +97,12 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
 
         //returns layout
         return layout;
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.listener = (Listener)context;
     }
 
     class FetchNote extends AsyncTask<String,Void, ArrayList<Chord>> {
@@ -125,9 +150,7 @@ public class MainActivityFragment extends Fragment implements View.OnClickListen
             if (result != null)
                 Log.d(LOG_TAG, result.toString());
             //help
-            Intent intent = new Intent(MainActivityFragment.this.getActivity(), ChordsActivity.class);
-            intent.putExtra("chords", result);
-            startActivity(intent);
+            listener.onButtonClick(result);
 
         }
     }
