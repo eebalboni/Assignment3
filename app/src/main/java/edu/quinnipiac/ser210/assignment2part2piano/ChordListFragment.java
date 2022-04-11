@@ -10,14 +10,20 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Locale;
+import java.util.Random;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -35,13 +41,7 @@ public class ChordListFragment extends Fragment {
     private LinearLayoutManager linearLayoutManager;
     private ArrayList<Chord> mChordData;
     private ChordAdapter mChordAdapter;
-
-    static interface Listener{
-        boolean toolbarItemClicked(MenuItem item);
-    }
-
-    private Listener listener;
-
+    private Toolbar mToolbar;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -72,6 +72,7 @@ public class ChordListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -84,18 +85,20 @@ public class ChordListFragment extends Fragment {
         // Inflate the layout for this fragment
         View layout = inflater.inflate(R.layout.fragment_chord_list,container,false);
 
-        Toolbar myToolbar = (Toolbar) layout.findViewById(R.id.toolbar);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(myToolbar);
+        mToolbar = (Toolbar) layout.findViewById(R.id.toolbar);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(mToolbar);
 
         mRecyclerView = layout.findViewById(R.id.recyclerView);
         mRecyclerView.setHasFixedSize(true);
         linearLayoutManager = new LinearLayoutManager(layout.getContext());
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
-        //temp data
-        mChordData = new ArrayList<Chord>();
-        String[] b = {"b"};
-        mChordData.add(new Chord("b",b,b));
+//        if(mChordData == null){
+//            //temp data
+//            mChordData = new ArrayList<Chord>();
+//            String[] b = {"b"};
+//            mChordData.add(new Chord("b",b,b));
+//        }
 
         mChordAdapter = new ChordAdapter(this.getActivity(), mChordData);
         mRecyclerView.setAdapter(mChordAdapter);
@@ -107,24 +110,86 @@ public class ChordListFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        this.listener = (Listener) context;
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(listener != null){
-            listener.toolbarItemClicked(item);
-            return true;
-        }else{
-            return false;
+        int id = item.getItemId();
+        switch(id){
+            case R.id.action_shuffle:{
+                shuffle();
+                return true;
+            }
+            case R.id.action_random:{
+                random();
+                return true;
+            }
+            default:
+                return false;
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.main_menu, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+
+        //Listener for the search view
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                filter(s);
+                return false;
+            }
+        });
     }
 
     public void setChordData(ArrayList<Chord> chords){
         mChordData = chords;
+    }
+
+    public void replaceChordData(ArrayList<Chord> chords){
+        mChordData = chords;
+        mChordAdapter.filterList(mChordData);
+    }
+//The difference between setChordData and replaceChordData is that setChordData handles sending the chord data to the fragment while replaceChordData handles sending the chord data to the activity
+
+    //Searches for a chord using a given string from the Search View
+    public void filter(String text){
+        ArrayList<Chord> filteredList = new ArrayList<>();
+
+        for(Chord item : mChordData){
+            if(item.getRoot().toLowerCase().contains(text.toLowerCase(Locale.ROOT))){
+                filteredList.add(item);
+            }
+        }
+
+        if(filteredList.isEmpty()){
+            Toast.makeText(this.getActivity(), "No Chords Found", Toast.LENGTH_SHORT).show();
+        }else{
+            mChordAdapter.filterList(filteredList);
+        }
+    }
+
+    //Shuffles the recycle view
+    public void shuffle(){
+        Collections.shuffle(mChordData, new Random());
         mChordAdapter.filterList(mChordData);
     }
 
+    //Scrolls to a random position in the recycle view, resulting a random chord being shown
+    public void random(){
+        int pos = (int) (Math.random() * mChordData.size());
+        linearLayoutManager.scrollToPositionWithOffset(pos, 0);
+    }
 
 
 }
